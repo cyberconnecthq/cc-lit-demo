@@ -1,5 +1,5 @@
 {
-  "name": "cc-content-app",
+  "name": "cc-lit-demo",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -11,7 +11,7 @@
   "dependencies": {
     "@apollo/client": "^3.7.0",
     "@ethersproject/providers": "^5.7.1",
-    "@lit-protocol/sdk-browser": "^1.1.234",
+    "@lit-protocol/sdk-browser": "^1.1.248",
     "@metamask/detect-provider": "^2.0.0",
     "@ngneat/falso": "^6.1.0",
     "@radix-ui/react-dialog": "^1.0.2",

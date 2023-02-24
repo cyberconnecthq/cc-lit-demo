@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useContext } from "react";
 import { TailSpin } from "react-loading-icons";
-import { useMutation } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import {
   pinFileToIPFS,
   pinJSONToIPFS,
@@ -15,6 +15,7 @@ import { ModalContext } from "../../context/modal";
 import { v4 as uuidv4 } from "uuid";
 // @ts-ignore
 import LitJsSdk from "@lit-protocol/sdk-browser";
+import { RELAY_ACTION_STATUS } from "@/graphql/RelayActionStatus";
 
 function PostBtn({
   nftImageURL,
@@ -37,12 +38,15 @@ function PostBtn({
   const [createRegisterEssenceTypedData] = useMutation(
     CREATE_REGISTER_ESSENCE_TYPED_DATA
   );
+  // const [getRelayActionStatus] = useQuery(RELAY_ACTION_STATUS)
   const [relay] = useMutation(RELAY);
+  const [relayActionStatus, setRelayActionStatus] = React.useState({any: ""});
+  const [relayActionId, setRelayActionId] = React.useState("");
 
   const encryptWithLit = async (data: any) => {
     const client = new LitJsSdk.LitNodeClient();
     await client.connect();
-    const chain = "goerli";
+    const chain = "bnbtestnet";
 
     const accessControlConditions = [
       {
@@ -102,7 +106,7 @@ function PostBtn({
           stateMutability: "view",
           type: "function",
         },
-        chain: "goerli",
+        chain: "bscTestnet",
         returnValueTest: {
           key: "",
           comparator: "=",
@@ -112,7 +116,7 @@ function PostBtn({
     ];
 
     const authSig = await LitJsSdk.checkAndSignAuthMessage({
-      chain: "goerli",
+      chain: "bscTestnet",
     });
     const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(
       data
@@ -122,7 +126,7 @@ function PostBtn({
       unifiedAccessControlConditions,
       symmetricKey,
       authSig,
-      chain: "goerli",
+      chain: "bscTestnet",
     });
 
     return {
@@ -132,6 +136,57 @@ function PostBtn({
         "base16"
       ),
     };
+  };
+  const pollRelayActionStatus = async (relayActionId: string) => {
+    const res = await fetch(
+      "https://api.cyberconnect.dev/testnet/",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          "X-API-KEY": "3Oc2eWR771lttA7KoHYGEstNboFZqKVi",
+        },
+        body: JSON.stringify({
+          query: `query relayActionStatus($relayActionId: ID!) {
+				relayActionStatus(relayActionId: $relayActionId){ 
+				... on RelayActionStatusResult {
+				txHash
+				}
+				... on RelayActionError {
+				reason
+				}
+				... on RelayActionQueued {
+				reason
+				}
+				}
+				}
+			      `,
+          variables: {
+            relayActionId,
+          },
+        }),
+      }
+    );
+
+    const resData = await res.json();
+
+    return resData.data.relayActionStatus;
+  };
+
+
+  const post = async (id: string) => {
+    console.log("start polling");
+    const res = await pollRelayActionStatus(id);
+    console.log("res", res)
+    if (res.txHash) {
+      console.log("txHash", res.txHash);
+      handleModal("success", `Your post was successfully relayed https://testnet.bscscan.com/tx/${res.txHash}}`);
+      return;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    console.log("peroidic polling end");
+    await post(id);
   };
 
   const handleOnClick = async (e: any) => {
@@ -147,7 +202,7 @@ function PostBtn({
       if (!primaryProfile?.profileID) {
         throw Error("Youn need to Sign up.");
       }
-
+      console.log("content", content)
       const encryptedContent = await encryptWithLit(content);
       /* Connect wallet and get provider */
       const provider = await connectWallet();
@@ -224,7 +279,7 @@ function PostBtn({
                       totalSupply: 1000,
                       /* Amount that needs to be paid to collect essence */
                       amount: 1,
-                      /* The currency for the  amount. Chainlink token contract on Goerli */
+                      /* The currency for the  amount. Chainlink token contract on bscTestnet */
                       currency: "0x326C977E6efc84E512bB9C30f76E30c160eD06FB",
                       /* If it require that the collector is also subscribed */
                       subscribeRequired: false,
@@ -256,14 +311,35 @@ function PostBtn({
           },
         },
       });
-      // const txHash = relayResult.data?.relay?.relayTransaction?.txHash;
+      const relayActionId = relayResult.data.relay.relayActionId;
+      console.log("relayActionId", relayActionId);
+      setRelayActionId(relayActionId);
+      /* Close Post Modal */
+			handleModal(null, "");
 
-      /* Log the transaction hash */
-      // console.log("~~ Tx hash ~~");
-      // console.log(txHash);
+			const relayingPost = {
+				createdBy: {
+					handle: primaryProfile?.handle,
+					avatar: primaryProfile?.avatar,
+					metadata: primaryProfile?.metadata,
+					profileID: primaryProfile?.profileID,
+				},
+				essenceID: 0, // Value will be updated once it's indexed
+				tokenURI: `https://cyberconnect.mypinata.cloud/ipfs/${ipfsHash}`,
+				isIndexed: false,
+				isCollectedByMe: false,
+				collectMw: undefined,
+				relayActionId: relayActionId,
+			};
+      console.log("relayingPost", relayingPost);
+      localStorage.setItem(
+				"relayingPosts",
+				JSON.stringify([...indexingPosts, relayingPost])
+			);
+      post(relayActionId)
 
       /* Display success message */
-      handleModal("success", "Post was created!");
+      handleModal("info", "Your post is being relayed...");
     } catch (error) {
       /* Set the indexingPosts in the state variables */
       setIndexingPosts([...indexingPosts]);

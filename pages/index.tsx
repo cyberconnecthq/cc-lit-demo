@@ -29,7 +29,7 @@ const Home: NextPage = () => {
       });
 
       setFeaturedPosts(
-        data?.address.wallet.primaryProfile.essences.edges.map(
+        data?.address.wallet?.primaryProfile?.essences?.edges.map(
           (item: any) => item.node
         ) || []
       );

@@ -471,6 +471,7 @@ svg {
 }
 
 .modal-success,
+.modal-info,
 .modal-error {
   border-radius: 4px;
   display: grid;
@@ -483,17 +484,23 @@ svg {
 }
 
 .modal-success div,
+.modal-info div,
 .modal-error div {
   overflow: hidden;
 }
 
 .modal-success svg,
+.modal-info svg,
 .modal-error svg {
   width: 30px;
 }
 
 .modal-success svg path {
   fill: var(--green);
+}
+
+.modal-info svg path {
+  fill: var(--gray);
 }
 
 .modal-error svg path {
