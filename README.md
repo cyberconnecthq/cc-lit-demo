@@ -40,7 +40,11 @@ cp .env.example .env
 and populate the file with the following
 
  - `NEXT_PUBLIC_API_KEY` and `NEXT_PUBLIC_API_SECRET` are for uploading metadata using Pinata (register on Pinata).
- - `NEXT_PUBLIC_CYBERCONNECT_API_KEY` is for the `relay` mutation. We have a default key setup in the repo, but the relayer may run out of tBNB. If so then please signup to get your own API key from our dashboard and deposit tBNB into the relayer address. (you can use [BNB Faucet to get tBNB](https://testnet.binance.org/faucet-smart))
+ - `NEXT_PUBLIC_CYBERCONNECT_API_KEY` is for the `relay` mutation. 
+ 
+ 
+ > We have a default API key setup in the repo, but the relayer may run out of tBNB. If so then please signup to get your own API key from [our dashboard](https://dashboard.cyberconnect.me/) and deposit `tBNB` into the relayer address. (you can use [BNB Faucet to get tBNB](https://testnet.binance.org/faucet-smart))
+ 
 
 
 

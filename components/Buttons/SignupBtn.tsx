@@ -18,7 +18,7 @@ import { AuthContext } from "../../context/auth";
 import { ModalContext } from "../../context/modal";
 
 function SignupBtn({ handle, avatar, name, bio, operator }: ISignupInput) {
-	const router = useRouter();
+	// const router = useRouter();
 	const { indexingProfiles, setIndexingProfiles, connectWallet, checkNetwork } =
 		useContext(AuthContext);
 	const { handleModal } = useContext(ModalContext);
@@ -116,7 +116,7 @@ function SignupBtn({ handle, avatar, name, bio, operator }: ISignupInput) {
 	return (
 		<button
 			className="signup-btn"
-			onClick={() => router.push("https://testnet.cyberconnect.me/")}
+			onClick={() => window.open("https://testnet.cyberconnect.me/", "_blank")}
 		>
 			Mint Profile
 		</button>

@@ -173,23 +173,6 @@ function PostBtn({
 
     return resData.data.relayActionStatus;
   };
-  // const pollRelayActionStatus = async (relayActionId: string) => {
-  //   // const { error, data, startPolling, stopPolling } = useQuery(RELAY_ACTION_STATUS)
-  //   // const res = await getRelayActionStatus({
-  //   //   variables: {
-  //   //     relayActionId: relayActionId,
-  //   //   },
-  //   // });
-  //   const { loading, error, data: res } = useQuery(RELAY_ACTION_STATUS, {
-  //     variables: { relayActionId: relayActionId },
-  //     pollInterval: 1000,
-  //   });
-  
-  //   if (loading) return null;
-  //   if (error) return `Error! ${error}`;
-
-  //   return res?.data?.relayActionStatus;
-  // };
 
 
   const post = async (id: string) => {
@@ -368,28 +351,6 @@ function PostBtn({
     }
     setLoading(false);
   };
-  // useEffect(() => {
-	// 	if (!(relayActionId && accessToken)) return;
-
-	// 	(async () => {
-	// 		/* Get the primary profile for the wallet address */
-  //     console.log("relayActionId", relayActionId);
-	// 		const res = await getRelayActionStatus({
-	// 			variables: {
-	// 				relayActionId: relayActionId,
-	// 			},
-	// 		});
-  //     console.log("start polling");
-
-  //     console.log("res", res);
-	// 		const relayActionStatus = res?.data?.relayActionStatus
-  //     if (relayActionStatus.txHash) {
-  //       alert("Metadata updated!");
-  //       return;
-  //     }
-  //     setRelayActionStatus(relayActionStatus)
-	// 	})();
-	// }, [relayActionId]);
 
   return (
     <button
