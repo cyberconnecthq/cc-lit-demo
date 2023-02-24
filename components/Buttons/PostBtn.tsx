@@ -40,7 +40,6 @@ function PostBtn({
   );
   // const [getRelayActionStatus] = useQuery(RELAY_ACTION_STATUS)
   const [relay] = useMutation(RELAY);
-  const [relayActionStatus, setRelayActionStatus] = React.useState({any: ""});
   const [relayActionId, setRelayActionId] = React.useState("");
 
   const encryptWithLit = async (data: any) => {
