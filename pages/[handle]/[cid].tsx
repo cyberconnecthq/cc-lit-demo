@@ -25,8 +25,8 @@ const decryptWithLit = async (
 ) => {
   const client = new LitJsSdk.LitNodeClient({ alertWhenUnauthorized: false });
   await client.connect();
-  const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain: "goerli" });
-  const chain = "goerli";
+  const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain: "bscTestnet" });
+  const chain = "bscTestnet";
 
   const evmContractConditions = [
     {
@@ -58,7 +58,7 @@ const decryptWithLit = async (
         stateMutability: "view",
         type: "function",
       },
-      chain: "goerli",
+      chain: "bscTestnet",
       returnValueTest: {
         key: "",
         comparator: "=",
@@ -70,7 +70,7 @@ const decryptWithLit = async (
   const symmetricKey = await client.getEncryptionKey({
     evmContractConditions,
     toDecrypt: encryptedSymmetricKey,
-    chain: "goerli",
+    chain: "bscTestnet",
     authSig,
   });
 
@@ -86,8 +86,8 @@ const decryptWithLitUnifiedConditions = async (
 ) => {
   const client = new LitJsSdk.LitNodeClient({ alertWhenUnauthorized: false });
   await client.connect();
-  const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain: "goerli" });
-  const chain = "goerli";
+  const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain: "bscTestnet" });
+  const chain = "bscTestnet";
 
   const unifiedAccessControlConditions = [
     {
@@ -133,7 +133,7 @@ const decryptWithLitUnifiedConditions = async (
         stateMutability: "view",
         type: "function",
       },
-      chain: "goerli",
+      chain: "bscTestnet",
       returnValueTest: {
         key: "",
         comparator: "=",
@@ -145,7 +145,7 @@ const decryptWithLitUnifiedConditions = async (
   const symmetricKey = await client.getEncryptionKey({
     unifiedAccessControlConditions,
     toDecrypt: encryptedSymmetricKey,
-    chain: "goerli",
+    chain: "bscTestnet",
     authSig,
   });
 

@@ -77,8 +77,8 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     connectWallet();
-
     const accessToken = localStorage.getItem("accessToken");
+
 
     if (accessToken) {
       setAccessToken(accessToken);
@@ -357,7 +357,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
         await provider.send("wallet_addEthereumChain", [
           {
             chainId: "0x" + CHAIN_ID.toString(16),
-            rpcUrls: ["https://goerli.infura.io/v3/"],
+            rpcUrls: ["https://data-seed-prebsc-1-s1.binance.org:8545"],
           },
         ]);
 

@@ -1,4 +1,4 @@
-export const CHAIN_ID = 5; // Goerli Testnet Network chain id
+export const CHAIN_ID = 97; // BNB Testnet Network chain id
 
 export const PROFILE_NFT_CONTRACT =
     "0x57e12b7a5f38a7f9c23ebd0400e6e53f2a45f271"; // Link3 ProfileNFT contract address
