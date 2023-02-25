@@ -1,9 +1,5 @@
-import { useRouter } from "next/router";
 import { useContext, useState } from "react";
-import { ethers } from "ethers";
-import ProfileNFTABI from "../../abi/ProfileNFT.json";
 import {
-	PROFILE_NFT_CONTRACT,
 	PROFILE_NFT_OPERATOR,
 } from "../../helpers/constants";
 import { pinJSONToIPFS } from "../../helpers/functions";
@@ -75,16 +71,13 @@ function SignupBtn({ handle, avatar, name, bio, operator }: ISignupInput) {
             console.log("relayResult", relayResult);
             const relayActionId = relayResult.data?.relay?.relayActionId;
             console.log("relayActionId", relayActionId);
-            // const relayActionStatusResult = await relayActionStatus({variables:{relayActionId:relayActionId}});
-            // console.log("relayActionStatusResult", relayActionStatusResult);
-            // const relayActionStatusData = relayActionStatusResult.data?.relayActionStatus;
 
             const pollRelayActionStatus = async (id: string) => {
                 console.log("start polling");
                 const relayActionStatusResult = await relayActionStatus({variables:{relayActionId:relayActionId}, fetchPolicy:"network-only"});
                 console.log("relayActionStatusResult", relayActionStatusResult);
                 if (relayActionStatusResult.data?.relayActionStatus?.txHash) {
-                  alert("Metadata updated!");
+                    handleModal("success", "Profile was created!");
                   return;
                 } else if (relayActionStatusResult.data?.relayActionStatus?.reason) {
                     alert("Error: " + relayActionStatusResult.data?.relayActionStatus?.reason);
@@ -95,28 +88,6 @@ function SignupBtn({ handle, avatar, name, bio, operator }: ISignupInput) {
               };
             await pollRelayActionStatus(relayActionId);
             console.log("peroidic polling end");
-			/* Get the contract instance */
-			// const contract = new ethers.Contract(
-			// 	PROFILE_NFT_CONTRACT,
-			// 	ProfileNFTABI,
-			// 	signer
-			// );
-
-			// /* Call the createProfile function to create the profile */
-			// const tx = await contract.createProfile(
-			// 	/* CreateProfileParams */
-			// 	{
-			// 		to: address,
-			// 		handle: handle || randUserName(),
-			// 		avatar: avatar || randAvatar({ size: 200 }),
-			// 		metadata: ipfsHash,
-			// 		operator: operator || PROFILE_NFT_OPERATOR,
-			// 	},
-			// 	/* preData */
-			// 	0x0,
-			// 	/* postData */
-			// 	0x0
-			// );
 
 			/* Close Signup Modal */
 			handleModal(null, "");
@@ -137,13 +108,6 @@ function SignupBtn({ handle, avatar, name, bio, operator }: ISignupInput) {
 					isIndexed: false,
 				},
 			]);
-
-			/* Wait for the transaction to be executed */
-			// await tx.wait();
-
-			// /* Log the transaction hash */
-			// console.log("~~ Tx hash ~~");
-			// console.log(tx.hash);
 
 			/* Display success message */
 			handleModal("success", "Profile was created!");
