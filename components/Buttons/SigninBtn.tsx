@@ -57,7 +57,7 @@ function SigninBtn() {
         },
       });
       const accessToken = accessTokenResult?.data?.loginVerify?.accessToken;
-
+      console.log("setting access token: ", accessToken);
       /* Save the access token in local storage */
       localStorage.setItem("accessToken", accessToken);
 

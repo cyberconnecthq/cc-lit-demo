@@ -318,6 +318,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       if (!oldAddress) {
         localStorage.setItem("address", address);
       } else if (oldAddress !== address) {
+        console.log("clearing local storage")
         localStorage.clear();
         window.location.reload();
       } else {
@@ -331,6 +332,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       return web3Provider;
     } catch (error) {
       /* Throw the error */
+      console.error(error);
       throw error;
     }
   };
