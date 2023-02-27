@@ -22,7 +22,7 @@ const SignupForm = () => {
 
   return (
     <div className="form signup-form">
-      {/* <h2 className="font-bold text-2xl">Create profile</h2>
+      <h2 className="font-bold text-2xl">Create profile</h2>
       <div>
         <label>Handle (w/o @)</label>
         <input
@@ -68,9 +68,8 @@ const SignupForm = () => {
       <div className="form-note">
         <strong>Note:</strong> For empty fields we will randomly generate
         values.
-      </div> */}
+      </div>
       <label>Mint your ccProfile NFT and return to this page to sign in.</label>
-      
       <SignupBtn {...signupInput} />
     </div>
   );

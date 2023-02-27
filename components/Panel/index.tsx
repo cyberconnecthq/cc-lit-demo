@@ -60,7 +60,7 @@ const Panel = () => {
                   className="signup-btn"
                   onClick={() => handleModal("signup", "")}
                 >
-                  Sign up
+                  Mint ccProfile
                 </button>
                 <button className="signup-btn" onClick={handleLogOut}>
                   Log out
