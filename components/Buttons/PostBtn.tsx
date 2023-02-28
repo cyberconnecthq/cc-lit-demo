@@ -47,9 +47,8 @@ function PostBtn({
     const client = new LitJsSdk.LitNodeClient();
     await client.connect();
     const chain = "bscTestnet";
-
     
-    const unifiedAccessControlConditions = [
+    const onlySubscriberCondition = [
       {
         conditionType: "evmContract",
         permanent: false,
@@ -97,7 +96,7 @@ function PostBtn({
     );
 
     const encryptedSymmetricKey = await client.saveEncryptionKey({
-      unifiedAccessControlConditions,
+      onlySubscriberCondition,
       symmetricKey,
       authSig,
       chain: chain,

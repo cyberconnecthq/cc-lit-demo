@@ -18,7 +18,7 @@ import { formatDate } from "@/helpers/functions";
 import LitJsSdk from "@lit-protocol/sdk-browser";
 import { TailSpin } from "react-loading-icons";
 
-const decryptWithLitUnifiedConditions = async (
+const decryptWithLit = async (
   encryptedSymmetricKey: string,
   blob: Blob,
   profileId: string,
@@ -29,7 +29,7 @@ const decryptWithLitUnifiedConditions = async (
   const chain = "bscTestnet";
   const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain: chain });
 
-  const unifiedAccessControlConditions = [
+  const onlySubscriberCondition = [
     {
       conditionType: "evmContract",
       permanent: false,
@@ -69,7 +69,7 @@ const decryptWithLitUnifiedConditions = async (
     },
   ];
   const symmetricKey = await client.getEncryptionKey({
-    unifiedAccessControlConditions,
+    onlySubscriberCondition,
     toDecrypt: encryptedSymmetricKey,
     chain: chain,
     authSig,
@@ -137,7 +137,7 @@ const Post = () => {
       }
 
       try {
-        const content = await decryptWithLitUnifiedConditions(
+        const content = await decryptWithLit(
           encryptedSymmetricKey,
           blob,
           router.query.profileID as string,
