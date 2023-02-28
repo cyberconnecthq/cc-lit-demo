@@ -29,6 +29,15 @@ const Modal = () => {
             </div>
           </div>
         );
+      case "info":
+        return (
+          <div className="modal-info">
+            <BsFillCheckCircleFill />
+            <div>
+              <strong>Info</strong>: {modalText}
+            </div>
+          </div>
+        );
       case "error":
         return (
           <div className="modal-error">

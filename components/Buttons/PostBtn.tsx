@@ -16,6 +16,7 @@ import { v4 as uuidv4 } from "uuid";
 // @ts-ignore
 import LitJsSdk from "@lit-protocol/sdk-browser";
 import { RELAY_ACTION_STATUS } from "@/graphql/RelayActionStatus";
+import { pollRelayActionStatus } from "@/helpers/functions";
 
 function PostBtn({
   nftImageURL,
@@ -45,40 +46,14 @@ function PostBtn({
   const encryptWithLit = async (data: any) => {
     const client = new LitJsSdk.LitNodeClient();
     await client.connect();
-    const chain = "bnbtestnet";
+    const chain = "bscTestnet";
 
-    const accessControlConditions = [
-      {
-        contractAddress: "",
-        standardContractType: "",
-        chain,
-        method: "",
-        parameters: [":userAddress"],
-        returnValueTest: {
-          comparator: "=",
-          value: "0xbd358966445e1089e3AdD528561719452fB78198",
-        },
-      },
-    ];
-
+    
     const unifiedAccessControlConditions = [
-      {
-        conditionType: "evmBasic",
-        contractAddress: "",
-        standardContractType: "",
-        chain,
-        method: "",
-        parameters: [":userAddress"],
-        returnValueTest: {
-          comparator: "=",
-          value: address,
-        },
-      },
-      { operator: "or" },
       {
         conditionType: "evmContract",
         permanent: false,
-        contractAddress: "0xa52cc9b8219dce25bc791a8b253dec61f16d5ff0",
+        contractAddress: "0x0561d367868B2d8E405B1241Ba568C40aB8fD2c8",
         functionName: "isSubscribedByMe",
         functionParams: [String(primaryProfile?.profileID), ":userAddress"],
         functionAbi: {
@@ -105,7 +80,7 @@ function PostBtn({
           stateMutability: "view",
           type: "function",
         },
-        chain: "bscTestnet",
+        chain: chain,
         returnValueTest: {
           key: "",
           comparator: "=",
@@ -115,7 +90,7 @@ function PostBtn({
     ];
 
     const authSig = await LitJsSdk.checkAndSignAuthMessage({
-      chain: "bscTestnet",
+      chain: chain,
     });
     const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(
       data
@@ -125,7 +100,7 @@ function PostBtn({
       unifiedAccessControlConditions,
       symmetricKey,
       authSig,
-      chain: "bscTestnet",
+      chain: chain,
     });
 
     return {
@@ -136,44 +111,7 @@ function PostBtn({
       ),
     };
   };
-  const pollRelayActionStatus = async (relayActionId: string) => {
-    const res = await fetch(
-      "https://api.cyberconnect.dev/testnet/",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          "X-API-KEY": "3Oc2eWR771lttA7KoHYGEstNboFZqKVi",
-        },
-        body: JSON.stringify({
-          query: `query relayActionStatus($relayActionId: ID!) {
-				relayActionStatus(relayActionId: $relayActionId){ 
-				... on RelayActionStatusResult {
-				txHash
-				}
-				... on RelayActionError {
-				reason
-				}
-				... on RelayActionQueued {
-				reason
-				}
-				}
-				}
-			      `,
-          variables: {
-            relayActionId,
-          },
-        }),
-      }
-    );
-
-    const resData = await res.json();
-
-    return resData.data.relayActionStatus;
-  };
-
-
+  
   const post = async (id: string) => {
     console.log("start polling");
     const res = await pollRelayActionStatus(id);
@@ -201,7 +139,6 @@ function PostBtn({
       if (!primaryProfile?.profileID) {
         throw Error("Youn need to Sign up.");
       }
-      console.log("content", content)
       const encryptedContent = await encryptWithLit(content);
       /* Connect wallet and get provider */
       const provider = await connectWallet();

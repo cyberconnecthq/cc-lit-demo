@@ -20,7 +20,6 @@ function SignupBtn({ handle, avatar, name, bio, operator }: ISignupInput) {
 	const { address, indexingProfiles, setIndexingProfiles, connectWallet, checkNetwork } =
 		useContext(AuthContext);
 	const { handleModal } = useContext(ModalContext);
-    const [gaslessModeHandle, setGaslessModeHandle] = useState<string>();
     const [createTypedData, { data: dataCreateTypedData, loading: loadingCreateTypedData, error: errorCreateTypedData }] = useMutation(CREATE_CREATE_PROFILE_TYPED_DATA);
     const [relay, { data: relayData, loading: relayLoading, error: relayError }] = useMutation(RELAY);
     const [relayActionStatus, { data: relayActionStatusData, loading: relayActionStatusLoading, error: relayActionStatusError }] = useLazyQuery(RELAY_ACTION_STATUS);

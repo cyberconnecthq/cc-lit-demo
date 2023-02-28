@@ -7,8 +7,6 @@ const httpLink = createHttpLink({
 
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem("accessToken");
-  // console.log("token", token);
-  // console.log("process.env.NEXT_PUBLIC_CYBERCONNECT_API_KEY", process.env.NEXT_PUBLIC_CYBERCONNECT_API_KEY);
   return {
     headers: {
       ...headers,

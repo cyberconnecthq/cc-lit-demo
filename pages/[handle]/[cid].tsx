@@ -18,66 +18,6 @@ import { formatDate } from "@/helpers/functions";
 import LitJsSdk from "@lit-protocol/sdk-browser";
 import { TailSpin } from "react-loading-icons";
 
-const decryptWithLit = async (
-  encryptedSymmetricKey: string,
-  blob: Blob,
-  profileId: string
-) => {
-  const client = new LitJsSdk.LitNodeClient({ alertWhenUnauthorized: false });
-  await client.connect();
-  const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain: "bscTestnet" });
-  const chain = "bscTestnet";
-
-  const evmContractConditions = [
-    {
-      permanent: false,
-      contractAddress: "0xa52cc9b8219dce25bc791a8b253dec61f16d5ff0",
-      functionName: "isSubscribedByMe",
-      functionParams: [profileId, ":userAddress"],
-      functionAbi: {
-        inputs: [
-          {
-            internalType: "uint256",
-            name: "profileId",
-            type: "uint256",
-          },
-          {
-            internalType: "address",
-            name: "me",
-            type: "address",
-          },
-        ],
-        name: "isSubscribedByMe",
-        outputs: [
-          {
-            internalType: "bool",
-            name: "",
-            type: "bool",
-          },
-        ],
-        stateMutability: "view",
-        type: "function",
-      },
-      chain: "bscTestnet",
-      returnValueTest: {
-        key: "",
-        comparator: "=",
-        value: "true",
-      },
-    },
-  ];
-
-  const symmetricKey = await client.getEncryptionKey({
-    evmContractConditions,
-    toDecrypt: encryptedSymmetricKey,
-    chain: "bscTestnet",
-    authSig,
-  });
-
-  const decryptedString = await LitJsSdk.decryptString(blob, symmetricKey);
-
-  return decryptedString;
-};
 const decryptWithLitUnifiedConditions = async (
   encryptedSymmetricKey: string,
   blob: Blob,
@@ -86,29 +26,16 @@ const decryptWithLitUnifiedConditions = async (
 ) => {
   const client = new LitJsSdk.LitNodeClient({ alertWhenUnauthorized: false });
   await client.connect();
-  const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain: "bscTestnet" });
   const chain = "bscTestnet";
+  const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain: chain });
 
   const unifiedAccessControlConditions = [
     {
-      conditionType: "evmBasic",
-      contractAddress: "",
-      standardContractType: "",
-      chain,
-      method: "",
-      parameters: [":userAddress"],
-      returnValueTest: {
-        comparator: "=",
-        value: address,
-      },
-    },
-    { operator: "or" },
-    {
       conditionType: "evmContract",
       permanent: false,
-      contractAddress: "0xa52cc9b8219dce25bc791a8b253dec61f16d5ff0",
+      contractAddress: "0x0561d367868B2d8E405B1241Ba568C40aB8fD2c8",
       functionName: "isSubscribedByMe",
-      functionParams: [profileId, ":userAddress"],
+      functionParams: [String(profileId), ":userAddress"],
       functionAbi: {
         inputs: [
           {
@@ -133,7 +60,7 @@ const decryptWithLitUnifiedConditions = async (
         stateMutability: "view",
         type: "function",
       },
-      chain: "bscTestnet",
+      chain: chain,
       returnValueTest: {
         key: "",
         comparator: "=",
@@ -141,11 +68,10 @@ const decryptWithLitUnifiedConditions = async (
       },
     },
   ];
-
   const symmetricKey = await client.getEncryptionKey({
     unifiedAccessControlConditions,
     toDecrypt: encryptedSymmetricKey,
-    chain: "bscTestnet",
+    chain: chain,
     authSig,
   });
 
@@ -196,14 +122,12 @@ const Post = () => {
       const data = await res.json();
 
       setPost(data);
-      console.log("data", data);
 
       const encryptedStringBlobResp = await fetch(
         parseURL(JSON.parse(data.content).contentHash.ipfshash)
       );
 
       const blob = await encryptedStringBlobResp.blob();
-
       const { encryptedSymmetricKey } = JSON.parse(data.content);
 
       if (!accessToken || !address) {
@@ -223,22 +147,9 @@ const Post = () => {
         setAccessFailed(false);
         setValidating(false);
       } catch (error) {
-        try {
-          const content = await decryptWithLit(
-            encryptedSymmetricKey,
-            blob,
-            router.query.profileID as string
-          );
-          setContent(content);
-          setAccessFailed(false);
-          setValidating(false);
-        } catch (error) {
-          setAccessFailed(true);
-          setValidating(false);
-          console.error(error);
-          setAccessFailed(true);
-          setValidating(false);
-        }
+        console.error(error);
+        setAccessFailed(true);
+        setValidating(false);
       }
     }
   };
