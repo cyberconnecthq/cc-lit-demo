@@ -24,6 +24,7 @@ const PostPage: NextPage = () => {
           // chainID: 5,
           myAddress: address,
         },
+        fetchPolicy: "network-only",
       });
 
       setFeaturedPosts(

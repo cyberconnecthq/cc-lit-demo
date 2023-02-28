@@ -31,7 +31,7 @@ const decryptWithLit = async (
   const evmContractConditions = [
     {
       permanent: false,
-      contractAddress: "0xa52cc9b8219dce25bc791a8b253dec61f16d5ff0",
+      contractAddress: "0x0561d367868B2d8E405B1241Ba568C40aB8fD2c8",
       functionName: "isSubscribedByMe",
       functionParams: [profileId, ":userAddress"],
       functionAbi: {
@@ -106,7 +106,7 @@ const decryptWithLitUnifiedConditions = async (
     {
       conditionType: "evmContract",
       permanent: false,
-      contractAddress: "0xa52cc9b8219dce25bc791a8b253dec61f16d5ff0",
+      contractAddress: "0x0561d367868B2d8E405B1241Ba568C40aB8fD2c8",
       functionName: "isSubscribedByMe",
       functionParams: [profileId, ":userAddress"],
       functionAbi: {

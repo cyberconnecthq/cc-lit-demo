@@ -45,21 +45,7 @@ function PostBtn({
   const encryptWithLit = async (data: any) => {
     const client = new LitJsSdk.LitNodeClient();
     await client.connect();
-    const chain = "bnbtestnet";
-
-    const accessControlConditions = [
-      {
-        contractAddress: "",
-        standardContractType: "",
-        chain,
-        method: "",
-        parameters: [":userAddress"],
-        returnValueTest: {
-          comparator: "=",
-          value: "0xbd358966445e1089e3AdD528561719452fB78198",
-        },
-      },
-    ];
+    const chain = "bscTestnet";
 
     const unifiedAccessControlConditions = [
       {
@@ -78,7 +64,7 @@ function PostBtn({
       {
         conditionType: "evmContract",
         permanent: false,
-        contractAddress: "0xa52cc9b8219dce25bc791a8b253dec61f16d5ff0",
+        contractAddress: "0x0561d367868B2d8E405B1241Ba568C40aB8fD2c8",
         functionName: "isSubscribedByMe",
         functionParams: [String(primaryProfile?.profileID), ":userAddress"],
         functionAbi: {
@@ -105,7 +91,7 @@ function PostBtn({
           stateMutability: "view",
           type: "function",
         },
-        chain: "bscTestnet",
+        chain: chain,
         returnValueTest: {
           key: "",
           comparator: "=",
@@ -115,7 +101,7 @@ function PostBtn({
     ];
 
     const authSig = await LitJsSdk.checkAndSignAuthMessage({
-      chain: "bscTestnet",
+      chain: chain,
     });
     const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(
       data
@@ -125,7 +111,7 @@ function PostBtn({
       unifiedAccessControlConditions,
       symmetricKey,
       authSig,
-      chain: "bscTestnet",
+      chain: chain,
     });
 
     return {
