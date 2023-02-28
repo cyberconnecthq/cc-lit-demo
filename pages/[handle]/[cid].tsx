@@ -25,8 +25,8 @@ const decryptWithLit = async (
 ) => {
   const client = new LitJsSdk.LitNodeClient({ alertWhenUnauthorized: false });
   await client.connect();
-  const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain: "bscTestnet" });
   const chain = "bscTestnet";
+  const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain: chain });
 
   const evmContractConditions = [
     {
@@ -58,7 +58,7 @@ const decryptWithLit = async (
         stateMutability: "view",
         type: "function",
       },
-      chain: "bscTestnet",
+      chain: chain,
       returnValueTest: {
         key: "",
         comparator: "=",
@@ -70,7 +70,7 @@ const decryptWithLit = async (
   const symmetricKey = await client.getEncryptionKey({
     evmContractConditions,
     toDecrypt: encryptedSymmetricKey,
-    chain: "bscTestnet",
+    chain: chain,
     authSig,
   });
 
@@ -86,8 +86,8 @@ const decryptWithLitUnifiedConditions = async (
 ) => {
   const client = new LitJsSdk.LitNodeClient({ alertWhenUnauthorized: false });
   await client.connect();
-  const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain: "bscTestnet" });
   const chain = "bscTestnet";
+  const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain: chain });
 
   const unifiedAccessControlConditions = [
     {
@@ -133,7 +133,7 @@ const decryptWithLitUnifiedConditions = async (
         stateMutability: "view",
         type: "function",
       },
-      chain: "bscTestnet",
+      chain: chain,
       returnValueTest: {
         key: "",
         comparator: "=",
@@ -145,7 +145,7 @@ const decryptWithLitUnifiedConditions = async (
   const symmetricKey = await client.getEncryptionKey({
     unifiedAccessControlConditions,
     toDecrypt: encryptedSymmetricKey,
-    chain: "bscTestnet",
+    chain: chain,
     authSig,
   });
 
@@ -213,6 +213,9 @@ const Post = () => {
       }
 
       try {
+        console.log("trying unified conditions")
+        console.log("profile id", router.query.profileID)
+        console.log("address", address)
         const content = await decryptWithLitUnifiedConditions(
           encryptedSymmetricKey,
           blob,
@@ -224,6 +227,7 @@ const Post = () => {
         setValidating(false);
       } catch (error) {
         try {
+          console.log("trying evm basic conditions")
           const content = await decryptWithLit(
             encryptedSymmetricKey,
             blob,

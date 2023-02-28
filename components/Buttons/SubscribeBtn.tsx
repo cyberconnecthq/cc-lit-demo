@@ -4,6 +4,7 @@ import { CREATE_SUBSCRIBE_TYPED_DATA, RELAY } from "../../graphql";
 import { AuthContext } from "../../context/auth";
 import { ModalContext } from "../../context/modal";
 import { BiCheck } from "react-icons/bi";
+import { pollRelayActionStatus } from "@/helpers/functions";
 
 function SubscribeBtn({
   profileID,
@@ -73,14 +74,28 @@ function SubscribeBtn({
           },
         },
       });
-      const txHash = relayResult.data?.relay?.relayTransaction?.txHash;
+      const relayActionId = relayResult.data.relay.relayActionId;
+      console.log("relayActionId", relayActionId);
+      
 
-      /* Log the transation hash */
-      console.log("~~ Tx hash ~~");
-      console.log(txHash);
+      const subscribe = async (id: string) => {
+        console.log("start polling");
+        const res = await pollRelayActionStatus(id);
+        console.log("res", res)
+        if (res.txHash) {
+          console.log("txHash", res.txHash);
+          handleModal("success", `Your successfully subscribed https://testnet.bscscan.com/tx/${res.txHash}}`);
+          return;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        console.log("peroidic polling end");
+        await subscribe(id);
+      };
+
+      subscribe(relayActionId)
 
       /* Display success message */
-      handleModal("success", "Subscribed to profile!");
+      handleModal("info", "Your post is being relayed...");
     } catch (error) {
       /* Display error message */
       const message = error.message as string;

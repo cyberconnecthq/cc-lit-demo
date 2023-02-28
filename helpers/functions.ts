@@ -137,3 +137,41 @@ export const timeSince = (date: any) => {
 export const formatDate = (date: any) => {
   return format(new Date(date), "MMM d, yyyy");
 };
+
+export const pollRelayActionStatus = async (relayActionId: string) => {
+  const res = await fetch(
+    "https://api.cyberconnect.dev/testnet/",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        "X-API-KEY": "3Oc2eWR771lttA7KoHYGEstNboFZqKVi",
+      },
+      body: JSON.stringify({
+        query: `query relayActionStatus($relayActionId: ID!) {
+      relayActionStatus(relayActionId: $relayActionId){ 
+      ... on RelayActionStatusResult {
+      txHash
+      }
+      ... on RelayActionError {
+      reason
+      }
+      ... on RelayActionQueued {
+      reason
+      }
+      }
+      }
+          `,
+        variables: {
+          relayActionId,
+        },
+      }),
+    }
+  );
+
+  const resData = await res.json();
+
+  return resData.data.relayActionStatus;
+};
+
