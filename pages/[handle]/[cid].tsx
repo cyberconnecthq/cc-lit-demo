@@ -18,66 +18,6 @@ import { formatDate } from "@/helpers/functions";
 import LitJsSdk from "@lit-protocol/sdk-browser";
 import { TailSpin } from "react-loading-icons";
 
-const decryptWithLit = async (
-  encryptedSymmetricKey: string,
-  blob: Blob,
-  profileId: string
-) => {
-  const client = new LitJsSdk.LitNodeClient({ alertWhenUnauthorized: false });
-  await client.connect();
-  const chain = "bscTestnet";
-  const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain: chain });
-
-  const evmContractConditions = [
-    {
-      permanent: false,
-      contractAddress: "0x0561d367868B2d8E405B1241Ba568C40aB8fD2c8",
-      functionName: "isSubscribedByMe",
-      functionParams: [profileId, ":userAddress"],
-      functionAbi: {
-        inputs: [
-          {
-            internalType: "uint256",
-            name: "profileId",
-            type: "uint256",
-          },
-          {
-            internalType: "address",
-            name: "me",
-            type: "address",
-          },
-        ],
-        name: "isSubscribedByMe",
-        outputs: [
-          {
-            internalType: "bool",
-            name: "",
-            type: "bool",
-          },
-        ],
-        stateMutability: "view",
-        type: "function",
-      },
-      chain: chain,
-      returnValueTest: {
-        key: "",
-        comparator: "=",
-        value: "true",
-      },
-    },
-  ];
-
-  const symmetricKey = await client.getEncryptionKey({
-    evmContractConditions,
-    toDecrypt: encryptedSymmetricKey,
-    chain: chain,
-    authSig,
-  });
-
-  const decryptedString = await LitJsSdk.decryptString(blob, symmetricKey);
-
-  return decryptedString;
-};
 const decryptWithLitUnifiedConditions = async (
   encryptedSymmetricKey: string,
   blob: Blob,
@@ -102,44 +42,44 @@ const decryptWithLitUnifiedConditions = async (
         value: address,
       },
     },
-    { operator: "or" },
-    {
-      conditionType: "evmContract",
-      permanent: false,
-      contractAddress: "0x0561d367868B2d8E405B1241Ba568C40aB8fD2c8",
-      functionName: "isSubscribedByMe",
-      functionParams: [profileId, ":userAddress"],
-      functionAbi: {
-        inputs: [
-          {
-            internalType: "uint256",
-            name: "profileId",
-            type: "uint256",
-          },
-          {
-            internalType: "address",
-            name: "me",
-            type: "address",
-          },
-        ],
-        name: "isSubscribedByMe",
-        outputs: [
-          {
-            internalType: "bool",
-            name: "",
-            type: "bool",
-          },
-        ],
-        stateMutability: "view",
-        type: "function",
-      },
-      chain: chain,
-      returnValueTest: {
-        key: "",
-        comparator: "=",
-        value: "true",
-      },
-    },
+    // { operator: "or" },
+    // {
+    //   conditionType: "evmContract",
+    //   permanent: false,
+    //   contractAddress: "0x0561d367868B2d8E405B1241Ba568C40aB8fD2c8",
+    //   functionName: "isSubscribedByMe",
+    //   functionParams: [profileId, ":userAddress"],
+    //   functionAbi: {
+    //     inputs: [
+    //       {
+    //         internalType: "uint256",
+    //         name: "profileId",
+    //         type: "uint256",
+    //       },
+    //       {
+    //         internalType: "address",
+    //         name: "me",
+    //         type: "address",
+    //       },
+    //     ],
+    //     name: "isSubscribedByMe",
+    //     outputs: [
+    //       {
+    //         internalType: "bool",
+    //         name: "",
+    //         type: "bool",
+    //       },
+    //     ],
+    //     stateMutability: "view",
+    //     type: "function",
+    //   },
+    //   chain: chain,
+    //   returnValueTest: {
+    //     key: "",
+    //     comparator: "=",
+    //     value: "true",
+    //   },
+    // },
   ];
 
   const symmetricKey = await client.getEncryptionKey({
@@ -226,23 +166,9 @@ const Post = () => {
         setAccessFailed(false);
         setValidating(false);
       } catch (error) {
-        try {
-          console.log("trying evm basic conditions")
-          const content = await decryptWithLit(
-            encryptedSymmetricKey,
-            blob,
-            router.query.profileID as string
-          );
-          setContent(content);
-          setAccessFailed(false);
-          setValidating(false);
-        } catch (error) {
-          setAccessFailed(true);
-          setValidating(false);
-          console.error(error);
-          setAccessFailed(true);
-          setValidating(false);
-        }
+        console.error(error);
+        setAccessFailed(true);
+        setValidating(false);
       }
     }
   };

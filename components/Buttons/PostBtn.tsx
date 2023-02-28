@@ -16,6 +16,7 @@ import { v4 as uuidv4 } from "uuid";
 // @ts-ignore
 import LitJsSdk from "@lit-protocol/sdk-browser";
 import { RELAY_ACTION_STATUS } from "@/graphql/RelayActionStatus";
+import { pollRelayActionStatus } from "@/helpers/functions";
 
 function PostBtn({
   nftImageURL,
@@ -47,6 +48,7 @@ function PostBtn({
     await client.connect();
     const chain = "bscTestnet";
 
+    
     const unifiedAccessControlConditions = [
       {
         conditionType: "evmBasic",
@@ -59,45 +61,46 @@ function PostBtn({
           comparator: "=",
           value: address,
         },
-      },
-      { operator: "or" },
-      {
-        conditionType: "evmContract",
-        permanent: false,
-        contractAddress: "0x0561d367868B2d8E405B1241Ba568C40aB8fD2c8",
-        functionName: "isSubscribedByMe",
-        functionParams: [String(primaryProfile?.profileID), ":userAddress"],
-        functionAbi: {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "profileId",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "me",
-              type: "address",
-            },
-          ],
-          name: "isSubscribedByMe",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        chain: chain,
-        returnValueTest: {
-          key: "",
-          comparator: "=",
-          value: "true",
-        },
-      },
+      }
+      // ,
+      // { operator: "or" },
+      // {
+      //   conditionType: "evmContract",
+      //   permanent: false,
+      //   contractAddress: "0x0561d367868B2d8E405B1241Ba568C40aB8fD2c8",
+      //   functionName: "isSubscribedByMe",
+      //   functionParams: [String(primaryProfile?.profileID), ":userAddress"],
+      //   functionAbi: {
+      //     inputs: [
+      //       {
+      //         internalType: "uint256",
+      //         name: "profileId",
+      //         type: "uint256",
+      //       },
+      //       {
+      //         internalType: "address",
+      //         name: "me",
+      //         type: "address",
+      //       },
+      //     ],
+      //     name: "isSubscribedByMe",
+      //     outputs: [
+      //       {
+      //         internalType: "bool",
+      //         name: "",
+      //         type: "bool",
+      //       },
+      //     ],
+      //     stateMutability: "view",
+      //     type: "function",
+      //   },
+      //   chain: chain,
+      //   returnValueTest: {
+      //     key: "",
+      //     comparator: "=",
+      //     value: "true",
+      //   },
+      // },
     ];
 
     const authSig = await LitJsSdk.checkAndSignAuthMessage({
@@ -122,44 +125,7 @@ function PostBtn({
       ),
     };
   };
-  const pollRelayActionStatus = async (relayActionId: string) => {
-    const res = await fetch(
-      "https://api.cyberconnect.dev/testnet/",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          "X-API-KEY": "3Oc2eWR771lttA7KoHYGEstNboFZqKVi",
-        },
-        body: JSON.stringify({
-          query: `query relayActionStatus($relayActionId: ID!) {
-				relayActionStatus(relayActionId: $relayActionId){ 
-				... on RelayActionStatusResult {
-				txHash
-				}
-				... on RelayActionError {
-				reason
-				}
-				... on RelayActionQueued {
-				reason
-				}
-				}
-				}
-			      `,
-          variables: {
-            relayActionId,
-          },
-        }),
-      }
-    );
-
-    const resData = await res.json();
-
-    return resData.data.relayActionStatus;
-  };
-
-
+  
   const post = async (id: string) => {
     console.log("start polling");
     const res = await pollRelayActionStatus(id);
