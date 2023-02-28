@@ -31,57 +31,43 @@ const decryptWithLitUnifiedConditions = async (
 
   const unifiedAccessControlConditions = [
     {
-      conditionType: "evmBasic",
-      contractAddress: "",
-      standardContractType: "",
-      chain,
-      method: "",
-      parameters: [":userAddress"],
+      conditionType: "evmContract",
+      permanent: false,
+      contractAddress: "0x0561d367868B2d8E405B1241Ba568C40aB8fD2c8",
+      functionName: "isSubscribedByMe",
+      functionParams: [String(profileId), ":userAddress"],
+      functionAbi: {
+        inputs: [
+          {
+            internalType: "uint256",
+            name: "profileId",
+            type: "uint256",
+          },
+          {
+            internalType: "address",
+            name: "me",
+            type: "address",
+          },
+        ],
+        name: "isSubscribedByMe",
+        outputs: [
+          {
+            internalType: "bool",
+            name: "",
+            type: "bool",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+      chain: chain,
       returnValueTest: {
+        key: "",
         comparator: "=",
-        value: address,
+        value: "true",
       },
     },
-    // { operator: "or" },
-    // {
-    //   conditionType: "evmContract",
-    //   permanent: false,
-    //   contractAddress: "0x0561d367868B2d8E405B1241Ba568C40aB8fD2c8",
-    //   functionName: "isSubscribedByMe",
-    //   functionParams: [profileId, ":userAddress"],
-    //   functionAbi: {
-    //     inputs: [
-    //       {
-    //         internalType: "uint256",
-    //         name: "profileId",
-    //         type: "uint256",
-    //       },
-    //       {
-    //         internalType: "address",
-    //         name: "me",
-    //         type: "address",
-    //       },
-    //     ],
-    //     name: "isSubscribedByMe",
-    //     outputs: [
-    //       {
-    //         internalType: "bool",
-    //         name: "",
-    //         type: "bool",
-    //       },
-    //     ],
-    //     stateMutability: "view",
-    //     type: "function",
-    //   },
-    //   chain: chain,
-    //   returnValueTest: {
-    //     key: "",
-    //     comparator: "=",
-    //     value: "true",
-    //   },
-    // },
   ];
-
   const symmetricKey = await client.getEncryptionKey({
     unifiedAccessControlConditions,
     toDecrypt: encryptedSymmetricKey,
@@ -136,14 +122,12 @@ const Post = () => {
       const data = await res.json();
 
       setPost(data);
-      console.log("data", data);
 
       const encryptedStringBlobResp = await fetch(
         parseURL(JSON.parse(data.content).contentHash.ipfshash)
       );
 
       const blob = await encryptedStringBlobResp.blob();
-
       const { encryptedSymmetricKey } = JSON.parse(data.content);
 
       if (!accessToken || !address) {
@@ -153,9 +137,6 @@ const Post = () => {
       }
 
       try {
-        console.log("trying unified conditions")
-        console.log("profile id", router.query.profileID)
-        console.log("address", address)
         const content = await decryptWithLitUnifiedConditions(
           encryptedSymmetricKey,
           blob,

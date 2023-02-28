@@ -37,7 +37,7 @@ const Home: NextPage = () => {
       setIsLoading(false);
     };
 
-    getEssences("0x83cf2a88937E4a95dF3920a1C32aE9D31886EEed");
+    getEssences("0x2a871F46afCc105A91706602561F05BDe9D75BCb");
 
     return () => {
       setFeaturedPosts([]);

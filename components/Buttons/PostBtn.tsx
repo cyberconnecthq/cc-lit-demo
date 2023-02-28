@@ -51,56 +51,42 @@ function PostBtn({
     
     const unifiedAccessControlConditions = [
       {
-        conditionType: "evmBasic",
-        contractAddress: "",
-        standardContractType: "",
-        chain,
-        method: "",
-        parameters: [":userAddress"],
-        returnValueTest: {
-          comparator: "=",
-          value: address,
+        conditionType: "evmContract",
+        permanent: false,
+        contractAddress: "0x0561d367868B2d8E405B1241Ba568C40aB8fD2c8",
+        functionName: "isSubscribedByMe",
+        functionParams: [String(primaryProfile?.profileID), ":userAddress"],
+        functionAbi: {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "profileId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "me",
+              type: "address",
+            },
+          ],
+          name: "isSubscribedByMe",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
         },
-      }
-      // ,
-      // { operator: "or" },
-      // {
-      //   conditionType: "evmContract",
-      //   permanent: false,
-      //   contractAddress: "0x0561d367868B2d8E405B1241Ba568C40aB8fD2c8",
-      //   functionName: "isSubscribedByMe",
-      //   functionParams: [String(primaryProfile?.profileID), ":userAddress"],
-      //   functionAbi: {
-      //     inputs: [
-      //       {
-      //         internalType: "uint256",
-      //         name: "profileId",
-      //         type: "uint256",
-      //       },
-      //       {
-      //         internalType: "address",
-      //         name: "me",
-      //         type: "address",
-      //       },
-      //     ],
-      //     name: "isSubscribedByMe",
-      //     outputs: [
-      //       {
-      //         internalType: "bool",
-      //         name: "",
-      //         type: "bool",
-      //       },
-      //     ],
-      //     stateMutability: "view",
-      //     type: "function",
-      //   },
-      //   chain: chain,
-      //   returnValueTest: {
-      //     key: "",
-      //     comparator: "=",
-      //     value: "true",
-      //   },
-      // },
+        chain: chain,
+        returnValueTest: {
+          key: "",
+          comparator: "=",
+          value: "true",
+        },
+      },
     ];
 
     const authSig = await LitJsSdk.checkAndSignAuthMessage({
@@ -153,7 +139,6 @@ function PostBtn({
       if (!primaryProfile?.profileID) {
         throw Error("Youn need to Sign up.");
       }
-      console.log("content", content)
       const encryptedContent = await encryptWithLit(content);
       /* Connect wallet and get provider */
       const provider = await connectWallet();

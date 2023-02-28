@@ -95,7 +95,7 @@ function SubscribeBtn({
       subscribe(relayActionId)
 
       /* Display success message */
-      handleModal("info", "Your post is being relayed...");
+      handleModal("info", "Your subscription is being relayed...");
     } catch (error) {
       /* Display error message */
       const message = error.message as string;
